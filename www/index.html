@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#f8fafc" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Naka" />
+  <meta name="description" content="大学メールで認証された学生だけが使える、大学別の匿名キャンパスコミュニティ。" />
+  <title>Naka | 大学専用匿名キャンパス</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="assets/icon.svg" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#mainContent">メインへ移動</a>
+
+  <main id="mainContent" class="app-shell">
+    <section id="loginScreen" class="screen login-screen active" aria-labelledby="loginTitle">
+      <div class="brand-lockup" aria-label="Naka">
+        <img src="assets/icon.svg" alt="" class="app-icon" />
+        <span>Naka</span>
+      </div>
+
+      <div class="login-copy">
+        <p class="eyebrow">大学認証コミュニティ</p>
+        <h1 id="loginTitle">大学のリアルを、名前なしで。</h1>
+        <p>授業、サークル、就活、売買、今日のキャンパス。同じ大学の学生だけで話せる匿名フィード。</p>
+      </div>
+
+      <form id="loginForm" class="panel login-panel" novalidate>
+        <div class="field">
+          <label for="emailInput">大学メール</label>
+          <input id="emailInput" name="email" type="email" inputmode="email" autocomplete="email" placeholder="name@waseda.jp" required />
+          <p id="emailError" class="field-error" aria-live="polite"></p>
+        </div>
+
+        <label class="check-row">
+          <input id="rulesAgree" type="checkbox" required />
+          <span>投稿ルールとプライバシー方針に同意します</span>
+        </label>
+        <p id="rulesError" class="field-error" aria-live="polite"></p>
+
+        <button class="primary-button" type="submit">大学メールで続ける</button>
+        <p class="fine-print">本人名は表示されません。個人攻撃、連絡先、顔写真の晒しは投稿前に止めます。</p>
+      </form>
+
+      <div class="trust-grid" aria-label="安全機能">
+        <div>
+          <strong>認証</strong>
+          <span>許可ドメインのみ</span>
+        </div>
+        <div>
+          <strong>匿名</strong>
+          <span>投稿名は毎回保護</span>
+        </div>
+        <div>
+          <strong>通報</strong>
+          <span>即時レビュー導線</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="appScreen" class="screen app-screen" aria-label="Naka アプリ">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">今日のキャンパス</p>
+          <h2 id="campusName">早稲田大学</h2>
+        </div>
+        <button class="icon-button" id="safetyButton" type="button" aria-label="投稿ルールを開く">
+          <span aria-hidden="true">!</span>
+        </button>
+      </header>
+
+      <nav class="feed-tabs" aria-label="フィード切り替え">
+        <button class="tab active" type="button" data-feed="hot">Hot</button>
+        <button class="tab" type="button" data-feed="new">新着</button>
+        <button class="tab" type="button" data-feed="question">質問</button>
+        <button class="tab" type="button" data-feed="near">近く</button>
+      </nav>
+
+      <section id="homeView" class="view active" aria-labelledby="homeTitle">
+        <div class="view-heading">
+          <h2 id="homeTitle">フィード</h2>
+          <span id="feedCount" class="count-badge">0件</span>
+        </div>
+
+        <div class="category-strip" role="tablist" aria-label="カテゴリ">
+          <button class="chip active" type="button" data-category="all">全部</button>
+          <button class="chip" type="button" data-category="class">授業</button>
+          <button class="chip" type="button" data-category="circle">サークル</button>
+          <button class="chip" type="button" data-category="career">就活</button>
+          <button class="chip" type="button" data-category="market">売買</button>
+          <button class="chip" type="button" data-category="event">イベント</button>
+        </div>
+
+        <article class="moment-card">
+          <div>
+            <p class="moment-label">今伸びてる話題</p>
+            <h3>履修登録、今年も情報戦すぎる</h3>
+          </div>
+          <strong class="tabular">428</strong>
+        </article>
+
+        <div id="postList" class="post-list" aria-live="polite"></div>
+      </section>
+
+      <section id="classView" class="view" aria-labelledby="classesTitle">
+        <div class="view-heading">
+          <h2 id="classesTitle">授業レビュー</h2>
+          <span class="count-badge">3件</span>
+        </div>
+        <div class="field search-field">
+          <label for="classSearch">授業名・教授名で検索</label>
+          <input id="classSearch" type="search" placeholder="マーケティング、統計、教授名" />
+        </div>
+        <div id="classList" class="stack-list"></div>
+      </section>
+
+      <section id="marketView" class="view" aria-labelledby="marketTitle">
+        <div class="view-heading">
+          <h2 id="marketTitle">募集・売買</h2>
+          <button class="secondary-button" type="button" data-open-compose="market">投稿</button>
+        </div>
+        <div class="segmented" role="tablist" aria-label="募集カテゴリ">
+          <button class="segment active" type="button" data-market="all">全部</button>
+          <button class="segment" type="button" data-market="sell">売買</button>
+          <button class="segment" type="button" data-market="recruit">募集</button>
+        </div>
+        <div id="marketList" class="stack-list"></div>
+      </section>
+
+      <section id="profileView" class="view" aria-labelledby="profileTitle">
+        <div class="profile-panel">
+          <div class="avatar" aria-hidden="true">匿</div>
+          <div>
+            <h2 id="profileTitle">匿名の早稲田生</h2>
+            <p>投稿時は個人名ではなく、大学内だけで有効な匿名表示になります。</p>
+          </div>
+        </div>
+
+        <div class="settings-list">
+          <button class="settings-row" type="button" id="openRules">
+            <span>投稿ルール</span>
+            <strong>確認</strong>
+          </button>
+          <button class="settings-row" type="button" id="openPrivacy">
+            <span>プライバシー</span>
+            <strong>確認</strong>
+          </button>
+          <button class="settings-row danger" type="button" id="logoutButton">
+            <span>ログアウト</span>
+            <strong>退出</strong>
+          </button>
+        </div>
+      </section>
+
+      <button id="composeButton" class="compose-button" type="button" aria-label="匿名で投稿する">+</button>
+
+      <nav class="bottom-nav" aria-label="主要ナビゲーション">
+        <button class="nav-item active" type="button" data-view="homeView">
+          <span aria-hidden="true">⌂</span><span>ホーム</span>
+        </button>
+        <button class="nav-item" type="button" data-view="classView">
+          <span aria-hidden="true">◌</span><span>授業</span>
+        </button>
+        <button class="nav-item center" type="button" id="bottomCompose" aria-label="匿名で投稿する">+</button>
+        <button class="nav-item" type="button" data-view="marketView">
+          <span aria-hidden="true">□</span><span>募集</span>
+        </button>
+        <button class="nav-item" type="button" data-view="profileView">
+          <span aria-hidden="true">◎</span><span>自分</span>
+        </button>
+      </nav>
+    </section>
+  </main>
+
+  <div id="composeModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="composeTitle">
+    <form id="composeForm" class="modal-card" novalidate>
+      <div class="modal-header">
+        <h2 id="composeTitle">匿名で投稿</h2>
+        <button class="icon-button" id="closeModal" type="button" aria-label="投稿画面を閉じる">×</button>
+      </div>
+      <fieldset class="compose-categories">
+        <legend>カテゴリ</legend>
+        <label><input type="radio" name="composeCategory" value="class" checked />授業</label>
+        <label><input type="radio" name="composeCategory" value="circle" />サークル</label>
+        <label><input type="radio" name="composeCategory" value="career" />就活</label>
+        <label><input type="radio" name="composeCategory" value="market" />売買</label>
+        <label><input type="radio" name="composeCategory" value="event" />イベント</label>
+      </fieldset>
+
+      <div class="field">
+        <label for="postText">本文</label>
+        <textarea id="postText" name="postText" rows="6" placeholder="例: 3限のマーケ論、今日出席取りましたか？" maxlength="280"></textarea>
+        <div class="field-meta">
+          <p id="postError" class="field-error" aria-live="polite"></p>
+          <span id="charCount" class="tabular">0/280</span>
+        </div>
+      </div>
+
+      <div id="safetyHint" class="safety-hint" aria-live="polite">
+        個人名、連絡先、住所、顔写真の晒し、誹謗中傷は投稿できません。
+      </div>
+      <button class="primary-button" type="submit">投稿する</button>
+    </form>
+  </div>
+
+  <div id="infoModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="infoTitle">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 id="infoTitle">投稿ルール</h2>
+        <button class="icon-button" id="closeInfo" type="button" aria-label="閉じる">×</button>
+      </div>
+      <div id="infoBody" class="info-body"></div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
