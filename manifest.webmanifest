@@ -1,0 +1,21 @@
+{
+  "name": "Naka",
+  "short_name": "Naka",
+  "description": "大学メールで認証された学生だけが使える、大学別の匿名キャンパスコミュニティ。",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f8fafc",
+  "theme_color": "#f8fafc",
+  "icons": [
+    {
+      "src": "assets/icon.svg",
+      "sizes": "1024x1024",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["social", "education"],
+  "lang": "ja"
+}
