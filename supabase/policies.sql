@@ -4,7 +4,7 @@ alter table public.posts enable row level security;
 alter table public.comments enable row level security;
 alter table public.votes enable row level security;
 alter table public.class_reviews enable row level security;
-alter table public.market_items enable row level security;
+alter table public.local_cards enable row level security;
 alter table public.reports enable row level security;
 alter table public.moderation_events enable row level security;
 alter table public.beta_invites enable row level security;
@@ -141,8 +141,8 @@ with check (
   and (public.current_profile()).status = 'active'
 );
 
-create policy "Same university can read visible market items"
-on public.market_items for select
+create policy "Same university can read visible local cards"
+on public.local_cards for select
 to authenticated
 using (
   university_id = public.current_university_id()
@@ -153,8 +153,8 @@ using (
   )
 );
 
-create policy "Active users can create market items"
-on public.market_items for insert
+create policy "Active users can create local cards"
+on public.local_cards for insert
 to authenticated
 with check (
   university_id = public.current_university_id()

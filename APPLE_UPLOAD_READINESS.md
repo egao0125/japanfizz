@@ -10,7 +10,7 @@ This package is now a polished static/PWA prototype. It is not yet a signed nati
 - App icon in `assets/icon.svg`
 - PWA manifest in `manifest.webmanifest`
 - Offline shell caching in `sw.js`
-- Email domain validation, rule agreement, post creation, category filtering, class search, marketplace filtering, voting, reporting, logout, privacy/rules modals, and basic pre-post moderation checks
+- Email domain validation, rule agreement, post creation, local feed filtering, class search, voting, comments, reporting, blocking, logout, privacy/rules modals, and basic pre-post moderation checks
 
 ## Before App Store submission
 

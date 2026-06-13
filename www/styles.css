@@ -516,11 +516,13 @@ textarea::placeholder {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
   gap: 8px;
 }
 
 .vote-group {
   display: flex;
+  flex-wrap: wrap;
   gap: 6px;
 }
 
@@ -581,6 +583,10 @@ textarea::placeholder {
 .segmented {
   grid-template-columns: repeat(3, 1fr);
   margin-bottom: 12px;
+}
+
+.local-segments {
+  grid-template-columns: repeat(4, 1fr);
 }
 
 .profile-panel {

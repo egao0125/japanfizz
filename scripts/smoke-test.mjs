@@ -28,7 +28,7 @@ try {
 
   await page.goto(url, { waitUntil: "domcontentloaded" });
   await page.evaluate(() => {
-    localStorage.removeItem("naka.beta.v2");
+    localStorage.removeItem("naka.local.v1");
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.getRegistrations().then((registrations) => {
         registrations.forEach((registration) => registration.unregister());
@@ -42,6 +42,9 @@ try {
   await page.click("#loginForm button[type='submit']");
   await page.waitForSelector("#homeView.active");
   assert(await page.$eval("body", (body) => body.innerText.includes("フィード")), "feed did not render after login");
+  assert(await page.$eval("body", (body) => body.innerText.includes("ローカル")), "local nav did not render");
+  assert(!(await page.$eval("body", (body) => body.innerText.includes("売買"))), "buying/selling copy should not render");
+  assert(!(await page.$eval("body", (body) => body.innerText.includes("東京で"))), "Tokyo category copy should not render");
 
   await page.click("#composeButton");
   await page.type("#postText", "LINE IDを書いてください");
@@ -65,6 +68,10 @@ try {
   await page.type("#reportDetails", "テスト用の通報です。");
   await page.click("#reportForm button[type='submit']");
   await page.waitForFunction(() => document.body.innerText.includes("通報を運営キューに送信しました"));
+
+  await page.click("button.nav-item[data-view='localView']");
+  await page.waitForSelector("#localView.active");
+  assert(await page.$eval("body", (body) => body.innerText.includes("今日のミーム")), "local feed cards missing");
 
   await page.click("button.nav-item[data-view='profileView']");
   await page.waitForSelector("#profileView.active");

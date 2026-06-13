@@ -1,4 +1,4 @@
-const STORAGE_KEY = "naka.beta.v2";
+const STORAGE_KEY = "naka.local.v1";
 const CURRENT_USER_ID = "local-beta-user";
 
 const allowedUniversities = [
@@ -15,8 +15,9 @@ const allowedUniversities = [
 const categoryLabels = {
   class: "授業",
   circle: "サークル",
-  career: "就活",
-  market: "売買",
+  meme: "ミーム",
+  question: "質問",
+  after: "放課後",
   event: "イベント",
 };
 
@@ -47,9 +48,9 @@ const defaultData = {
       id: "p2",
       universityId: "waseda",
       authorId: "seed-author-2",
-      category: "circle",
+      category: "question",
       status: "visible",
-      body: "新歓の会場探してます。高田馬場周辺で40人くらい入れて、学生でも使いやすい場所ありますか？",
+      body: "大隈講堂前、人多すぎるけど今日なんかある？",
       votes: 31,
       commentCount: 1,
       reportCount: 0,
@@ -60,9 +61,9 @@ const defaultData = {
       id: "p3",
       universityId: "waseda",
       authorId: "seed-author-3",
-      category: "career",
+      category: "after",
       status: "visible",
-      body: "夏インターンのES添削、キャリアセンター以外で見てもらえる場所あったら知りたいです。",
+      body: "授業終わりに1時間だけ作業するなら、図書館とラウンジどっちが集中できる？",
       votes: 26,
       commentCount: 1,
       reportCount: 0,
@@ -73,11 +74,11 @@ const defaultData = {
       id: "p4",
       universityId: "waseda",
       authorId: "seed-author-2",
-      category: "market",
+      category: "meme",
       status: "visible",
-      body: "統計学入門の教科書を譲れます。書き込み少なめ、明日キャンパス受け渡し可能です。",
-      votes: 18,
-      commentCount: 0,
+      body: "履修登録期間の時間割スクショ、毎回パズルゲームみたいになってるの自分だけ？",
+      votes: 38,
+      commentCount: 3,
       reportCount: 0,
       createdAt: Date.now() - 51 * 60 * 1000,
       area: "near",
@@ -86,11 +87,11 @@ const defaultData = {
       id: "p5",
       universityId: "waseda",
       authorId: "seed-author-1",
-      category: "event",
+      category: "after",
       status: "visible",
-      body: "今日18時から学生起業のミートアップあります。初参加でも入りやすい雰囲気です。",
-      votes: 22,
-      commentCount: 0,
+      body: "昼休みの食堂、席取りゲーム始まるの早すぎる。",
+      votes: 29,
+      commentCount: 4,
       reportCount: 0,
       createdAt: Date.now() - 64 * 60 * 1000,
       area: "near",
@@ -137,10 +138,10 @@ const defaultData = {
     { id: "r3", universityId: "waseda", name: "現代社会とメディア", professor: "中村教授", meta: "出席: なし / レポート: 1回 / 人気急上昇", score: "4.7" },
     { id: "r4", universityId: "waseda", name: "キャリアデザイン基礎", professor: "高橋教授", meta: "出席: 毎回 / 課題: 少なめ / グループ発表あり", score: "3.9" },
   ],
-  marketItems: [
-    { id: "mk1", universityId: "waseda", kind: "sell", title: "経済学入門の教科書、半額で売ります", body: "状態きれい。明日キャンパス受け渡し可。", value: "¥1,200", status: "visible" },
-    { id: "mk2", universityId: "waseda", kind: "recruit", title: "新歓イベント運営メンバー募集", body: "企画、SNS、デザインできる人歓迎。", value: "3人", status: "visible" },
-    { id: "mk3", universityId: "waseda", kind: "recruit", title: "学生エンジニア募集", body: "週10h、Webアプリ開発。リモート可。", value: "DM", status: "visible" },
+  localCards: [
+    { id: "lc1", universityId: "waseda", kind: "meme", title: "今日のミーム", body: "抽選落ちした瞬間の顔、全員同じ説。", tag: "ミーム", status: "visible" },
+    { id: "lc2", universityId: "waseda", kind: "question", title: "近くの質問", body: "今キャンパスで一番空いてる自習場所どこ？", tag: "質問", status: "visible" },
+    { id: "lc3", universityId: "waseda", kind: "after", title: "放課後", body: "5限後に軽く寄れる場所、学生街っぽいところでおすすめある？", tag: "放課後", status: "visible" },
   ],
 };
 
@@ -148,7 +149,7 @@ const state = {
   data: loadData(),
   feed: "hot",
   category: "all",
-  market: "all",
+  local: "all",
   adminFilter: "reports",
   activePostId: "",
   reportTarget: null,
@@ -175,7 +176,7 @@ const elements = {
   classSearch: $("#classSearch"),
   classList: $("#classList"),
   classCount: $("#classCount"),
-  marketList: $("#marketList"),
+  localList: $("#localList"),
   adminList: $("#adminList"),
   adminCount: $("#adminCount"),
   adminBadge: $("#adminBadge"),
@@ -311,7 +312,7 @@ function postsForCurrentUniversity({ includePending = false } = {}) {
 
 function matchesFeed(post) {
   if (state.feed === "new") return true;
-  if (state.feed === "question") return post.body.includes("？") || post.body.includes("?");
+  if (state.feed === "question") return post.category === "question" || post.body.includes("？") || post.body.includes("?");
   if (state.feed === "near") return post.area === "near";
   return post.votes + post.commentCount * 2 - post.reportCount * 3 >= 20;
 }
@@ -340,7 +341,7 @@ function renderPosts() {
 
   elements.postList.innerHTML = filtered.map((post) => {
     const voteKey = `${currentUser().id}:${post.id}`;
-    const voted = state.data.votes[voteKey] === 1;
+    const voteValue = state.data.votes[voteKey] || 0;
     return `
       <article class="post-card">
         <div class="post-meta">
@@ -351,7 +352,9 @@ function renderPosts() {
         <p class="post-body">${escapeHtml(post.body)}</p>
         <div class="post-actions">
           <div class="vote-group" aria-label="投票とコメント">
-            <button class="action-button" type="button" data-vote="up" data-post-id="${post.id}" aria-pressed="${voted}">↑ ${post.votes}</button>
+            <button class="action-button" type="button" data-vote="up" data-post-id="${post.id}" aria-pressed="${voteValue === 1}">↑</button>
+            <button class="action-button" type="button" data-vote="down" data-post-id="${post.id}" aria-pressed="${voteValue === -1}">↓</button>
+            <button class="action-button" type="button" aria-label="スコア ${post.votes}">${post.votes}</button>
             <button class="action-button" type="button" data-open-comments="${post.id}">コメント ${post.commentCount}</button>
           </div>
           <div class="vote-group">
@@ -386,24 +389,24 @@ function renderClasses(query = "") {
     : `<div class="empty-state"><p>一致する授業がありません。</p></div>`;
 }
 
-function renderMarket() {
+function renderLocal() {
   const user = currentUser();
-  const filtered = state.data.marketItems
+  const filtered = state.data.localCards
     .filter((item) => item.universityId === user.universityId && item.status === "visible")
-    .filter((item) => state.market === "all" || item.kind === state.market);
+    .filter((item) => state.local === "all" || item.kind === state.local);
 
-  elements.marketList.innerHTML = filtered.length
+  elements.localList.innerHTML = filtered.length
     ? filtered.map((item) => `
       <article class="list-card">
         <div>
-          <div class="card-meta">${item.kind === "sell" ? "売買" : "募集"}</div>
+          <div class="card-meta">${escapeHtml(item.tag)}</div>
           <h3>${escapeHtml(item.title)}</h3>
           <p>${escapeHtml(item.body)}</p>
         </div>
-        <strong class="price">${escapeHtml(item.value)}</strong>
+        <strong class="price">${escapeHtml(categoryLabels[item.kind] || "近く")}</strong>
       </article>
     `).join("")
-    : `<div class="empty-state"><p>表示できる募集・売買はまだありません。</p></div>`;
+    : `<div class="empty-state"><p>近くの投稿はまだありません。</p><button class="secondary-button" type="button" data-open-compose="question">最初に投稿</button></div>`;
 }
 
 function renderAdmin() {
@@ -482,7 +485,7 @@ function renderAll() {
   elements.profileMeta.textContent = `${currentUser().email} / ${currentUser().role === "moderator" ? "運営テスト権限" : "学生"}`;
   renderPosts();
   renderClasses(elements.classSearch.value);
-  renderMarket();
+  renderLocal();
   renderAdmin();
   renderMetrics();
 }
@@ -585,11 +588,11 @@ function openInfo(type) {
         <ul>
           <li>個人名、顔写真、住所、電話番号、LINE ID、SNS IDの晒し</li>
           <li>性的な噂、犯罪の断定、人格攻撃、差別表現</li>
-          <li>本人確認できない売買、危険な勧誘、スパム</li>
+          <li>危険な勧誘、スパム、個人を特定する誘導</li>
         </ul>
         <h3>歓迎</h3>
         <ul>
-          <li>授業の質問、履修相談、就活相談、サークル募集、売買、キャンパス情報</li>
+          <li>授業の質問、履修相談、キャンパスミーム、放課後の相談、サークル情報</li>
         </ul>
       `,
     },
@@ -611,7 +614,7 @@ function openInfo(type) {
         <p>ベータ中のNakaは、大学内の実用情報共有を目的にしています。運営は安全性のため投稿の非表示、確認待ち、利用停止を行えます。</p>
         <ul>
           <li>大学メールを第三者に貸さない</li>
-          <li>売買はキャンパス内の安全な受け渡しに限定する</li>
+          <li>近くにいる人を特定できる書き方をしない</li>
           <li>通報・ブロック機能を乱用しない</li>
         </ul>
       `,
@@ -735,14 +738,14 @@ elements.composeForm.addEventListener("submit", (event) => {
     area: "near",
   };
   state.data.posts.unshift(post);
-  if (category === "market") {
-    state.data.marketItems.unshift({
-      id: uid("market"),
+  if (["meme", "question", "after"].includes(category)) {
+    state.data.localCards.unshift({
+      id: uid("local"),
       universityId: currentUser().universityId,
-      kind: "sell",
+      kind: category,
       title: text.slice(0, 28),
       body: text,
-      value: "相談",
+      tag: categoryLabels[category],
       status: post.status,
     });
   }
@@ -875,17 +878,19 @@ document.addEventListener("click", (event) => {
     return;
   }
 
-  const voteButton = event.target.closest("[data-vote='up']");
+  const voteButton = event.target.closest("[data-vote]");
   if (voteButton) {
     const post = visiblePostById(voteButton.dataset.postId);
     if (!post) return;
     const key = `${currentUser().id}:${post.id}`;
-    if (state.data.votes[key]) {
+    const nextValue = voteButton.dataset.vote === "down" ? -1 : 1;
+    const previousValue = state.data.votes[key] || 0;
+    if (previousValue === nextValue) {
       delete state.data.votes[key];
-      post.votes -= 1;
+      post.votes -= nextValue;
     } else {
-      state.data.votes[key] = 1;
-      post.votes += 1;
+      state.data.votes[key] = nextValue;
+      post.votes += nextValue - previousValue;
     }
     saveData();
     renderAll();
@@ -982,12 +987,12 @@ $$(".chip").forEach((button) => {
   });
 });
 
-$$(".segment[data-market]").forEach((button) => {
+$$(".segment[data-local]").forEach((button) => {
   button.addEventListener("click", () => {
-    $$(".segment[data-market]").forEach((item) => item.classList.remove("active"));
+    $$(".segment[data-local]").forEach((item) => item.classList.remove("active"));
     button.classList.add("active");
-    state.market = button.dataset.market;
-    renderMarket();
+    state.local = button.dataset.local;
+    renderLocal();
   });
 });
 

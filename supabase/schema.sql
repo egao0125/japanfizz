@@ -4,7 +4,7 @@ create type public.user_status as enum ('active', 'suspended', 'deleted');
 create type public.post_status as enum ('visible', 'pending', 'hidden', 'blocked', 'deleted');
 create type public.report_status as enum ('pending', 'reviewing', 'resolved', 'dismissed');
 create type public.moderation_action as enum ('allow', 'needs_review', 'block');
-create type public.market_kind as enum ('sell', 'recruit');
+create type public.local_card_kind as enum ('meme', 'question', 'after');
 
 create table public.universities (
   id uuid primary key default gen_random_uuid(),
@@ -30,7 +30,7 @@ create table public.posts (
   id uuid primary key default gen_random_uuid(),
   university_id uuid not null references public.universities(id),
   user_id uuid not null references public.profiles(id) on delete cascade,
-  category text not null check (category in ('class', 'circle', 'career', 'market', 'event')),
+  category text not null check (category in ('class', 'circle', 'question', 'meme', 'after', 'event')),
   body text not null check (char_length(body) between 8 and 280),
   status public.post_status not null default 'pending',
   hot_score integer not null default 0,
@@ -73,14 +73,14 @@ create table public.class_reviews (
   created_at timestamptz not null default now()
 );
 
-create table public.market_items (
+create table public.local_cards (
   id uuid primary key default gen_random_uuid(),
   university_id uuid not null references public.universities(id),
   user_id uuid references public.profiles(id) on delete set null,
-  kind public.market_kind not null,
+  kind public.local_card_kind not null,
   title text not null,
   body text not null,
-  value text not null,
+  tag text not null,
   status public.post_status not null default 'visible',
   created_at timestamptz not null default now()
 );
@@ -89,7 +89,7 @@ create table public.reports (
   id uuid primary key default gen_random_uuid(),
   university_id uuid not null references public.universities(id),
   reporter_user_id uuid not null references public.profiles(id) on delete cascade,
-  target_type text not null check (target_type in ('post', 'comment', 'market_item', 'profile')),
+  target_type text not null check (target_type in ('post', 'comment', 'local_card', 'profile')),
   target_id uuid not null,
   reason text not null,
   details text,
@@ -102,7 +102,7 @@ create table public.reports (
 create table public.moderation_events (
   id uuid primary key default gen_random_uuid(),
   university_id uuid references public.universities(id),
-  target_type text not null check (target_type in ('post', 'comment', 'market_item')),
+  target_type text not null check (target_type in ('post', 'comment', 'local_card')),
   target_id uuid,
   user_id uuid references public.profiles(id) on delete set null,
   action public.moderation_action not null,
@@ -140,4 +140,4 @@ create index posts_university_status_created_idx on public.posts (university_id,
 create index comments_post_status_created_idx on public.comments (post_id, status, created_at);
 create index reports_university_status_created_idx on public.reports (university_id, status, created_at desc);
 create index class_reviews_university_class_idx on public.class_reviews (university_id, class_name);
-create index market_items_university_status_created_idx on public.market_items (university_id, status, created_at desc);
+create index local_cards_university_status_created_idx on public.local_cards (university_id, status, created_at desc);

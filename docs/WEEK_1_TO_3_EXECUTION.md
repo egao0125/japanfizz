@@ -4,7 +4,7 @@
 
 Implemented locally:
 - University email domain validation
-- Persistent local app data for feed, comments, votes, reports, blocks, and beta invites
+- Persistent local app data for feed, comments, votes, reports, blocks, local cards, and beta invites
 - Supabase schema in `supabase/schema.sql`
 - Row-level security policies in `supabase/policies.sql`
 - Seed data in `supabase/seed.sql`

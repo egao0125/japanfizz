@@ -1,7 +1,7 @@
 {
   "name": "japanfizz",
   "version": "1.0.0",
-  "description": "Naka は、大学メールで認証された学生だけが使える、大学別の匿名キャンパスコミュニティです。授業・履修・サークル・就活・バイト・売買・愚痴・質問など、大学生活で本当に必要な情報を、名前を出さずに共有できます。",
+  "description": "Naka is a Japanese campus-local anonymous app for university students, focused on nearby posts, memes, questions, classes, circles, and after-class chatter.",
   "main": "app.js",
   "scripts": {
     "start": "python3 -m http.server 4173",
