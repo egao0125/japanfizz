@@ -7,8 +7,8 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="Naka" />
-  <meta name="description" content="大学メールで認証された学生だけが使える、大学別の匿名キャンパスコミュニティ。" />
-  <title>Naka | 大学専用匿名キャンパス</title>
+  <meta name="description" content="大学メールで認証された学生だけが使える、大学別の匿名キャンパスアプリ。" />
+  <title>Naka | 大学専用匿名キャンパスアプリ</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="assets/icon.svg" />
@@ -25,9 +25,9 @@
       </div>
 
       <div class="login-copy">
-        <p class="eyebrow">大学認証コミュニティ</p>
+        <p class="eyebrow">大学認証キャンパスアプリ</p>
         <h1 id="loginTitle">大学のリアルを、名前なしで。</h1>
-        <p>授業、サークル、就活、売買、今日のキャンパス。同じ大学の学生だけで話せる匿名フィード。</p>
+        <p>授業、サークル、就活、売買、今日のキャンパス。同じ大学の学生だけで使える匿名アプリ。</p>
       </div>
 
       <form id="loginForm" class="panel login-panel" novalidate>
@@ -39,11 +39,12 @@
 
         <label class="check-row">
           <input id="rulesAgree" type="checkbox" required />
-          <span>投稿ルールとプライバシー方針に同意します</span>
+          <span>投稿ルール、プライバシー方針、ベータ利用条件に同意します</span>
         </label>
         <p id="rulesError" class="field-error" aria-live="polite"></p>
 
         <button class="primary-button" type="submit">大学メールで続ける</button>
+        <button class="secondary-button full-width" id="joinBetaButton" type="button">ベータ招待に登録</button>
         <p class="fine-print">本人名は表示されません。個人攻撃、連絡先、顔写真の晒しは投稿前に止めます。</p>
       </form>
 
@@ -54,11 +55,11 @@
         </div>
         <div>
           <strong>匿名</strong>
-          <span>投稿名は毎回保護</span>
+          <span>投稿名は保護</span>
         </div>
         <div>
-          <strong>通報</strong>
-          <span>即時レビュー導線</span>
+          <strong>運営</strong>
+          <span>通報と審査</span>
         </div>
       </div>
     </section>
@@ -69,9 +70,12 @@
           <p class="eyebrow">今日のキャンパス</p>
           <h2 id="campusName">早稲田大学</h2>
         </div>
-        <button class="icon-button" id="safetyButton" type="button" aria-label="投稿ルールを開く">
-          <span aria-hidden="true">!</span>
-        </button>
+        <div class="topbar-actions">
+          <span id="modeBadge" class="mode-badge">Beta</span>
+          <button class="icon-button" id="safetyButton" type="button" aria-label="投稿ルールを開く">
+            <span aria-hidden="true">!</span>
+          </button>
+        </div>
       </header>
 
       <nav class="feed-tabs" aria-label="フィード切り替え">
@@ -99,9 +103,9 @@
         <article class="moment-card">
           <div>
             <p class="moment-label">今伸びてる話題</p>
-            <h3>履修登録、今年も情報戦すぎる</h3>
+            <h3 id="momentTitle">履修登録、今年も情報戦すぎる</h3>
           </div>
-          <strong class="tabular">428</strong>
+          <strong id="momentScore" class="tabular">428</strong>
         </article>
 
         <div id="postList" class="post-list" aria-live="polite"></div>
@@ -110,7 +114,7 @@
       <section id="classView" class="view" aria-labelledby="classesTitle">
         <div class="view-heading">
           <h2 id="classesTitle">授業レビュー</h2>
-          <span class="count-badge">3件</span>
+          <span id="classCount" class="count-badge">0件</span>
         </div>
         <div class="field search-field">
           <label for="classSearch">授業名・教授名で検索</label>
@@ -132,16 +136,48 @@
         <div id="marketList" class="stack-list"></div>
       </section>
 
+      <section id="adminView" class="view" aria-labelledby="adminTitle">
+        <div class="view-heading">
+          <h2 id="adminTitle">運営キュー</h2>
+          <span id="adminCount" class="count-badge">0件</span>
+        </div>
+        <div class="segmented" role="tablist" aria-label="運営キュー">
+          <button class="segment active" type="button" data-admin-filter="reports">通報</button>
+          <button class="segment" type="button" data-admin-filter="pending">確認待ち</button>
+          <button class="segment" type="button" data-admin-filter="beta">ベータ</button>
+        </div>
+        <div id="adminList" class="stack-list"></div>
+      </section>
+
       <section id="profileView" class="view" aria-labelledby="profileTitle">
         <div class="profile-panel">
           <div class="avatar" aria-hidden="true">匿</div>
           <div>
             <h2 id="profileTitle">匿名の早稲田生</h2>
-            <p>投稿時は個人名ではなく、大学内だけで有効な匿名表示になります。</p>
+            <p id="profileMeta">投稿時は個人名ではなく、大学内だけで有効な匿名表示になります。</p>
+          </div>
+        </div>
+
+        <div class="metrics-grid" aria-label="ベータ指標">
+          <div>
+            <strong id="metricPosts" class="tabular">0</strong>
+            <span>投稿</span>
+          </div>
+          <div>
+            <strong id="metricReports" class="tabular">0</strong>
+            <span>通報</span>
+          </div>
+          <div>
+            <strong id="metricInvites" class="tabular">0</strong>
+            <span>招待</span>
           </div>
         </div>
 
         <div class="settings-list">
+          <button class="settings-row" type="button" data-view="adminView">
+            <span>運営キュー</span>
+            <strong id="adminBadge">確認</strong>
+          </button>
           <button class="settings-row" type="button" id="openRules">
             <span>投稿ルール</span>
             <strong>確認</strong>
@@ -149,6 +185,18 @@
           <button class="settings-row" type="button" id="openPrivacy">
             <span>プライバシー</span>
             <strong>確認</strong>
+          </button>
+          <button class="settings-row" type="button" id="openTerms">
+            <span>利用規約</span>
+            <strong>確認</strong>
+          </button>
+          <button class="settings-row" type="button" id="openSupport">
+            <span>サポート</span>
+            <strong>連絡</strong>
+          </button>
+          <button class="settings-row danger" type="button" id="openDelete">
+            <span>アカウント削除</span>
+            <strong>申請</strong>
           </button>
           <button class="settings-row danger" type="button" id="logoutButton">
             <span>ログアウト</span>
@@ -208,6 +256,62 @@
     </form>
   </div>
 
+  <div id="commentModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="commentTitle">
+    <form id="commentForm" class="modal-card" novalidate>
+      <div class="modal-header">
+        <h2 id="commentTitle">コメント</h2>
+        <button class="icon-button" id="closeComment" type="button" aria-label="コメント画面を閉じる">×</button>
+      </div>
+      <div id="commentPostPreview" class="quoted-card"></div>
+      <div id="commentList" class="comment-list"></div>
+      <div class="field">
+        <label for="commentText">匿名コメント</label>
+        <textarea id="commentText" rows="4" maxlength="220" placeholder="短く、相手を傷つけない形で書く"></textarea>
+        <p id="commentError" class="field-error" aria-live="polite"></p>
+      </div>
+      <button class="primary-button" type="submit">コメントする</button>
+    </form>
+  </div>
+
+  <div id="reportModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="reportTitle">
+    <form id="reportForm" class="modal-card" novalidate>
+      <div class="modal-header">
+        <h2 id="reportTitle">通報</h2>
+        <button class="icon-button" id="closeReport" type="button" aria-label="通報画面を閉じる">×</button>
+      </div>
+      <div id="reportPreview" class="quoted-card"></div>
+      <fieldset class="radio-stack">
+        <legend>理由</legend>
+        <label><input type="radio" name="reportReason" value="個人情報・晒し" checked />個人情報・晒し</label>
+        <label><input type="radio" name="reportReason" value="誹謗中傷・脅し" />誹謗中傷・脅し</label>
+        <label><input type="radio" name="reportReason" value="性的な噂" />性的な噂</label>
+        <label><input type="radio" name="reportReason" value="スパム・勧誘" />スパム・勧誘</label>
+      </fieldset>
+      <div class="field">
+        <label for="reportDetails">補足</label>
+        <textarea id="reportDetails" rows="3" maxlength="180" placeholder="運営が確認しやすい補足があれば入力"></textarea>
+        <p id="reportError" class="field-error" aria-live="polite"></p>
+      </div>
+      <button class="primary-button" type="submit">運営に送る</button>
+    </form>
+  </div>
+
+  <div id="betaModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="betaTitle">
+    <form id="betaForm" class="modal-card" novalidate>
+      <div class="modal-header">
+        <h2 id="betaTitle">ベータ招待</h2>
+        <button class="icon-button" id="closeBeta" type="button" aria-label="ベータ招待を閉じる">×</button>
+      </div>
+      <p class="modal-copy">最初は1大学ずつ、治安と実用性を確認しながら招待します。</p>
+      <div class="field">
+        <label for="betaEmail">大学メール</label>
+        <input id="betaEmail" type="email" inputmode="email" placeholder="name@waseda.jp" />
+        <p id="betaError" class="field-error" aria-live="polite"></p>
+      </div>
+      <button class="primary-button" type="submit">招待リストに入る</button>
+    </form>
+  </div>
+
   <div id="infoModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="infoTitle">
     <div class="modal-card">
       <div class="modal-header">
@@ -215,6 +319,19 @@
         <button class="icon-button" id="closeInfo" type="button" aria-label="閉じる">×</button>
       </div>
       <div id="infoBody" class="info-body"></div>
+    </div>
+  </div>
+
+  <div id="confirmDialog" class="modal hidden" role="alertdialog" aria-modal="true" aria-labelledby="confirmTitle" aria-describedby="confirmBody">
+    <div class="modal-card compact">
+      <div class="modal-header">
+        <h2 id="confirmTitle">確認</h2>
+      </div>
+      <p id="confirmBody" class="modal-copy"></p>
+      <div class="button-row">
+        <button class="secondary-button" id="cancelConfirm" type="button">キャンセル</button>
+        <button class="danger-button" id="acceptConfirm" type="button">実行</button>
+      </div>
     </div>
   </div>
 

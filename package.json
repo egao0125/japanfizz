@@ -4,7 +4,11 @@
   "description": "Naka は、大学メールで認証された学生だけが使える、大学別の匿名キャンパスコミュニティです。授業・履修・サークル・就活・バイト・売買・愚痴・質問など、大学生活で本当に必要な情報を、名前を出さずに共有できます。",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "python3 -m http.server 4173",
+    "check": "node --check app.js && node --check www/app.js && node --check scripts/smoke-test.mjs && python3 -m json.tool manifest.webmanifest >/dev/null && python3 -m json.tool www/manifest.webmanifest >/dev/null && python3 -m json.tool capacitor.config.json >/dev/null",
+    "smoke": "node scripts/smoke-test.mjs",
+    "sync:ios": "npx cap sync ios",
+    "open:xcode": "open ios/App/App.xcodeproj"
   },
   "repository": {
     "type": "git",
@@ -21,5 +25,8 @@
     "@capacitor/cli": "^8.4.0",
     "@capacitor/core": "^8.4.0",
     "@capacitor/ios": "^8.4.0"
+  },
+  "devDependencies": {
+    "puppeteer-core": "^25.1.0"
   }
 }

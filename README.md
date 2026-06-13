@@ -1,5 +1,40 @@
 # Naka — 大学専用匿名キャンパスアプリ
 
+## Current beta build
+
+This repo now contains the static app, a Capacitor iOS wrapper, and Week 1-3 product scaffolding.
+
+Implemented for local beta testing:
+
+- University email domain gate
+- Persistent local feed, comments, votes, reports, blocks, moderation queue, beta invites, class reviews, and market items
+- Admin queue for pending posts and reports
+- In-app posting rules, privacy, terms, support, and account deletion request surfaces
+- Supabase schema, RLS policies, seed data, and moderation edge function scaffold
+- Capacitor iOS project at `ios/App/App.xcodeproj`
+
+Run locally:
+
+```sh
+npm install
+npm run start
+```
+
+Sync and open iOS:
+
+```sh
+npm run sync:ios
+npm run open:xcode
+```
+
+Validate:
+
+```sh
+npm run check
+```
+
+Execution notes live in `docs/WEEK_1_TO_3_EXECUTION.md`.
+
 Naka は、大学メールで認証された学生だけが使える、大学別の匿名キャンパスコミュニティです。授業・履修・サークル・就活・バイト・売買・愚痴・質問など、大学生活で本当に必要な情報を、名前を出さずに共有できます。
 
 コンセプトは **「大学専用の匿名 Threads。ただし中身は履修・募集・売買までできるキャンパス OS」** です。
@@ -626,4 +661,3 @@ npx serve .
 - プロフィール / ルール画面
 - 投稿モーダル
 - 簡易安全表示
-

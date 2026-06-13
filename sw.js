@@ -1,4 +1,4 @@
-const CACHE_NAME = "naka-static-v1";
+const CACHE_NAME = "naka-static-v2";
 const ASSETS = [
   "./",
   "./index.html",

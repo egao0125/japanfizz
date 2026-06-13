@@ -2,6 +2,8 @@ node_modules/
 dist/
 build/
 .DS_Store
+.env
+.env.local
 
 ios/App/DerivedData/
 ios/App/build/
