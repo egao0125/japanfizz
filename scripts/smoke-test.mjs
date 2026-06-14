@@ -46,7 +46,7 @@ try {
   assert(!(await page.$eval("body", (body) => body.innerText.includes("売買"))), "buying/selling copy should not render");
   assert(!(await page.$eval("body", (body) => body.innerText.includes("東京で"))), "Tokyo category copy should not render");
 
-  await page.click("#composeButton");
+  await page.click("#bottomCompose");
   await page.type("#postText", "LINE IDを書いてください");
   assert(await page.$eval("#safetyHint", (node) => node.innerText.includes("個人を特定")), "moderation warning did not appear");
   await page.$eval("#postText", (node) => {
